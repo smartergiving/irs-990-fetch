@@ -2,7 +2,6 @@
 private/
 data/
 dump/
-aws.json
 
 # Logs
 logs
