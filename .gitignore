@@ -2,6 +2,7 @@
 private/
 data/
 dump/
+tmp/
 
 # Logs
 logs

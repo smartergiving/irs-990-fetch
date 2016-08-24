@@ -1,24 +1,28 @@
 # IRS Form 990PF Fetch :: Node.js Edition
-A lightweight but powerful Node.js script to fetch all machine-readable IRS Form 990PFs and insert into a MongoDB database. 
+Lightweight but powerful Node.js scripts to fetch all machine-readable IRS Form 990PFs and insert into a MongoDB database. 
 
 Source: [Public IRS data set hosted by Amazon AWS](https://aws.amazon.com/public-data-sets/irs-990/)  
 
-## What it Does 
+## What it Does  
 
 - [x] Fetch full index.json of all Form 990s  
 - [x] Parse JSON and limit to Form 990PFs  
 - [ ] Fetch XML tax filings  
 - [ ] Parse XML and convert to JavaScript objects  
 - [x] Insert into MongoDB  
+
+#### The scripts  
+
+ 1. **awsIndex.js** - inserts the main index.json file contents into a MongoDB instance  
+ 2. **awsFoundations.js** - limits the MongoDB insertion to Form990PF's (e.g. foundations)  
+ 3. **awsFilingsFoundations.js** (in process) - fetches all Form 990PF filings and inserts into MongoDB  
   
 
 ## Getting Started
- 
-  - Coming soon
-  
-***
 
-#### License  
+Coming soon
+
+## License  
 
 MIT License
 

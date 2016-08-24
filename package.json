@@ -1,8 +1,8 @@
 {
   "name": "irs-nodejs-fetch",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Lightweight scripts to fetch, parse, and store machine readable IRS Form 990PFs",
-  "main": "fetchParseSaveMongo.js",
+  "main": "awsIndexFoundations.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -10,10 +10,16 @@
   "license": "MIT",
   "dependencies": {
     "JSONStream": "^1.1.3",
-    "aws-sdk": "^2.5.2",
-    "mongodb": "^2.2.6",
+    "aws-sdk": "^2.5.3",
+    "bluebird": "^3.4.1",
+    "event-stream": "^3.3.4",
+    "heapdump": "^0.3.7",
+    "memwatch-next": "^0.3.0",
+    "mongodb": "^2.2.8",
     "mongodb-promises": "^0.2.0",
     "stream": "0.0.2",
-    "stream-to-mongo-db": "^1.0.17"
+    "stream-to-mongo-db": "^1.0.17",
+    "util": "^0.10.3",
+    "xml2js": "^0.4.17"
   }
 }
