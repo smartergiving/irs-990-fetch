@@ -12,7 +12,7 @@ var paramsIndex = {
 };
 
 // MongoDB :: Declare variables
-var dbHost = 'mongodb://localhost:27017/'
+var dbHost = 'mongodb://localhost:27017/';
 var dbName = 'irs';
 var dbCollection = 'index';
 var MONGO_URL = dbHost + dbName;
