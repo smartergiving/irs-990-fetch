@@ -64,6 +64,7 @@ s3.makeUnauthenticatedRequest('getObject', paramsIndex).createReadStream()
         });
         // no need to explicity call close...the mongodb promises library should handle that.
     }
+    return;
 
   })
   .on('error', function(e) {
@@ -77,7 +78,7 @@ s3.makeUnauthenticatedRequest('getObject', paramsIndex).createReadStream()
 
 //xml2js
 function promisesParser(string) {
-  return new Promise(function (resolve, reject) {
+  var newPromise = new Promise(function (resolve, reject) {
     xml2jsParser(string.Body, parserOptions, function(err, result) {
       if (err) {
         return reject(err);
@@ -86,6 +87,7 @@ function promisesParser(string) {
        }
     });
   });
+  return newPromise;
 }
 
 //Leak detection
