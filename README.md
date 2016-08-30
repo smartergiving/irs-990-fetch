@@ -7,20 +7,28 @@ Source: [Public IRS data set hosted by Amazon AWS](https://aws.amazon.com/public
 
 - [x] Fetch full index.json of all Form 990s  
 - [x] Parse JSON and limit to Form 990PFs  
-- [ ] Fetch XML tax filings  
-- [ ] Parse XML and convert to JavaScript objects  
+- [x] Fetch XML tax filings  
+- [x] Parse XML and convert to JavaScript objects  
 - [x] Insert into MongoDB  
 
 #### The scripts  
 
- 1. **awsIndex.js** - inserts the main index.json file contents into a MongoDB instance  
- 2. **awsFoundations.js** - limits the MongoDB insertion to Form990PF's (e.g. foundations)  
- 3. **awsFilingsFoundations.js** (in process) - fetches all Form 990PF filings and inserts into MongoDB  
+ 1. `awsIndex.js` - inserts the main index.json file contents into a MongoDB instance  
+ 2. `awsIndexFoundations.js` - limits the MongoDB insertion to Form990PFs (i.e. foundations)  
+ 3. `awsFilingsFoundations.js` - fetches all Form 990PF filings and inserts into MongoDB  
   
 
 ## Getting Started
 
 Coming soon
+
+## Troubleshooting
+
+See `troubleshoot.js` to log memory usage and toggle between using the npm request-promise package and the AWS JavaScript SDK.
+
+## Credits  
+
+A huge thank you to [Joseph Lepis](https://www.linkedin.com/in/joseph-lepis-2700934) for the architectural guidance and mentorship. If you find these scripts useful and appreciate [hard-boiled fiction](https://en.wikipedia.org/wiki/Hardboiled), check out Joe's debut novel, [On the Edge](https://www.amazon.com/Edge-J-B-Christopher-ebook/dp/B00GWTXZ64/). 
 
 ## License  
 
