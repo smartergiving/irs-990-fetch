@@ -16,6 +16,7 @@ Source: [Public IRS data set hosted by Amazon AWS](https://aws.amazon.com/public
  1. `awsIndex.js` - inserts the full contents of the index files into a MongoDB instance  
  2. `awsIndexFoundations.js` - limits the MongoDB insertion to Form990PFs (i.e. foundations)  
  3. `awsFilingsFoundations.js` - fetches all Form 990-PF filings for the specified tax year and inserts into MongoDB  
+ 4. `custom.js` - combines data from IRS indexes and respective tax filings to create a custom index. Currently used to power our [IRS Form 990-PF Search demo](https://smartergiving.org/irs-990-search/).  
 
 ## Usage
 
