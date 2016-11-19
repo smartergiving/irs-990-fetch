@@ -1,26 +1,35 @@
 # IRS Form 990PF Fetch :: Node.js Edition
-Lightweight but powerful Node.js scripts to fetch all machine-readable IRS Form 990PFs and insert into a MongoDB database. 
+Lightweight but powerful Node.js scripts to fetch all machine-readable IRS Form 990-PFs and insert into a MongoDB database. 
 
 Source: [Public IRS data set hosted by Amazon AWS](https://aws.amazon.com/public-data-sets/irs-990/)  
 
 ## What it Does  
 
-- [x] Fetch full index.json of all Form 990s  
-- [x] Parse JSON and limit to Form 990PFs  
+- [x] Fetch each year's index of Form 990s  
+- [x] Parse JSON and limit to Form 990-PFs  
 - [x] Fetch XML tax filings  
 - [x] Parse XML and convert to JavaScript objects  
 - [x] Insert into MongoDB  
 
 #### The scripts  
 
- 1. `awsIndex.js` - inserts the main index.json file contents into a MongoDB instance  
+ 1. `awsIndex.js` - inserts the full contents of the index files into a MongoDB instance  
  2. `awsIndexFoundations.js` - limits the MongoDB insertion to Form990PFs (i.e. foundations)  
- 3. `awsFilingsFoundations.js` - fetches all Form 990PF filings and inserts into MongoDB  
-  
+ 3. `awsFilingsFoundations.js` - fetches all Form 990-PF filings for the specified tax year and inserts into MongoDB  
 
-## Getting Started
+## Usage
 
-Coming soon
+
+
+iMac with 16GB RAM  
+`ulimit -n 4096 && mongod --dbpath ./data/db/`  
+`ulimit -n 4096 && node awsFilingsFoundations`  
+
+MacBook Air with 8GB RAM (struggles)  
+`ulimit -n 2048 && mongod --dbpath ./data/db/`  
+`ulimit -n 2048 && node awsFilingsFoundations`  
+
+*Note: The IRS no longer offers a single index for all filings. Thus, each script must be run once for each year (e.g. [toggle the year](https://github.com/smartergiving/irs-nodejs-fetch/blob/master/awsFilingsFoundations.js#L9)). *
 
 ## Troubleshooting
 

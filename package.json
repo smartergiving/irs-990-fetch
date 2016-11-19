@@ -1,6 +1,6 @@
 {
   "name": "irs-nodejs-fetch",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Lightweight scripts to fetch, parse, and store machine readable IRS Form 990PFs",
   "main": "awsIndexFoundations.js",
   "scripts": {
@@ -19,6 +19,7 @@
     "mongodb-promises": "^0.2.0",
     "request": "^2.74.0",
     "request-promise": "^4.1.1",
+    "stream-to-mongo-db": "^1.0.17",
     "util": "^0.10.3",
     "xml2js": "^0.4.17"
   }

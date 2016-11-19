@@ -5,6 +5,10 @@ var JSONStream = require('JSONStream');
 var xml2jsParser = require('xml2js').parseString;
 var request_promise = require('request-promise');
 
+//IRS Indexes
+var year = '2016';
+var index = 'https://s3.amazonaws.com/irs-form-990/index_' + year + '.json';
+
 //AWS
 var AWS = require('aws-sdk');
 AWS.config.update({region: 'us-east-1'});
@@ -13,12 +17,9 @@ var s3 = new AWS.S3();
 //Mongo
 var dbHostPort = 'localhost:27017';
 var dbName = 'irs';
-var dbCollection = 'filings';
+var dbCollection = 'filings' + year;
 var db = require('mongodb-promises').db(dbHostPort, dbName);
 var mycollection = db.collection(dbCollection);
-
-//Main IRS index
-var index = 'https://s3.amazonaws.com/irs-form-990/index.json';
 
 // xml2js
 var parserOptions = {explicitArray: false, emptyTag: undefined, attrkey: 'attributes'};
@@ -29,7 +30,7 @@ request(index)
     console.error('-----Index Request Error-----');
     console.error(err);
   })
-  .pipe(JSONStream.parse(['AllFilings',true]))
+  .pipe(JSONStream.parse(['Filings' + year, true]))
   .on('error', function(err) {
     console.error('-----JSONParse Error-----');
     console.error(err);
