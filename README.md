@@ -1,7 +1,7 @@
-# IRS Form 990PF Fetch :: Node.js Edition
+# IRS Form 990-PF Fetch :: Node.js Edition
 Lightweight but powerful Node.js scripts to fetch all machine-readable IRS Form 990-PFs and insert into a MongoDB database. 
 
-Source: [Public IRS data set hosted by Amazon AWS](https://aws.amazon.com/public-data-sets/irs-990/)  
+Datasets: [Public IRS data set hosted by Amazon AWS](https://aws.amazon.com/public-data-sets/irs-990/)  
 
 ## What it Does  
 
@@ -11,12 +11,12 @@ Source: [Public IRS data set hosted by Amazon AWS](https://aws.amazon.com/public
 - [x] Parse XML and convert to JavaScript objects  
 - [x] Insert into MongoDB  
 
-#### The scripts  
+## The Scripts  
 
- 1. `awsIndex.js` - inserts the full contents of the index files into a MongoDB instance  
- 2. `awsIndexFoundations.js` - limits the MongoDB insertion to Form990PFs (i.e. foundations)  
- 3. `awsFilingsFoundations.js` - fetches all Form 990-PF filings for the specified tax year and inserts into MongoDB  
- 4. `custom.js` - combines data from IRS indexes and respective tax filings to create a custom index. Currently used to power our [IRS Form 990-PF Search demo](https://smartergiving.org/irs-990-search/).  
+ 1. `indexes.js` - fetches index listings relating to IRS Form 990-PF filings for the specified tax year and inserts into MongoDB   
+ 2. `filings.js` - fetches all IRS Form 990-PF filings for the specified tax year and inserts into MongoDB 
+ 3. `combined.js` - similar to filings.js, but inserts index data as well 
+ 3. `custom.js` - combines data from IRS indexes and respective tax filings to create a custom index. Currently used to power our [IRS Form 990-PF Search demo](https://smartergiving.org/irs-990-search/).  
 
 ## Usage
 
@@ -24,13 +24,13 @@ Source: [Public IRS data set hosted by Amazon AWS](https://aws.amazon.com/public
 
 iMac with 16GB RAM  
 `ulimit -n 4096 && mongod --dbpath ./data/db/`  
-`ulimit -n 4096 && node awsFilingsFoundations`  
+`ulimit -n 4096 && node combined`  
 
 MacBook Air with 8GB RAM (struggles)  
 `ulimit -n 2048 && mongod --dbpath ./data/db/`  
-`ulimit -n 2048 && node awsFilingsFoundations`  
+`ulimit -n 2048 && node combined`  
 
-*Note: The IRS no longer offers a single index for all filings. Thus, each script must be run once for each year (e.g. [toggle the year](https://github.com/smartergiving/irs-nodejs-fetch/blob/master/awsFilingsFoundations.js#L9)). *
+*Note: The IRS no longer offers a single index for all filings. Thus, each script must be run once for each year (e.g. [toggle the year](https://github.com/smartergiving/irs-nodejs-fetch/blob/master/combined.js#L9)). *
 
 ## Troubleshooting
 
