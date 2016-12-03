@@ -1,7 +1,7 @@
 db.algoliaTmp.find().forEach(function(u){
 var algolia = {};
 
-  var schema = u.Return.attributes.returnVersion;
+  //var schema = u.Return.attributes.returnVersion;
   var ein = u.Index.EIN;
   var organizationName = u.Index.OrganizationName;
   var assets = null;
@@ -11,6 +11,13 @@ var algolia = {};
   var taxPeriod = u.Index.TaxPeriod;
   var taxYear = null;
   var url = u.Index.URL;
+
+  //Capture IRS structural error
+  //It appears certain organizations are listed in the index as filing Form 990PF, despite being 990 filers
+  //It appears to be mostly community hospitals, e.g. https://s3.amazonaws.com/irs-form-990/201113139349302361_public.xml
+  if (u.Return.ReturnData.IRS990) {
+    return;
+  }
 
   //Assets
   assets = u.Return.ReturnData.IRS990PF.FMVAssetsEOYAmt || u.Return.ReturnData.IRS990PF.FMVAssetsEOY || null;
@@ -166,9 +173,6 @@ var algolia = {};
     'GrantMax': grantMax,
     'GrantMin': grantMin,
     'GrantMedian': grantMedian
-    //'GrantMedian': grantMedian,
-    //'People': people,
-    //'Grants': grants
   };
 
   //Helper functions

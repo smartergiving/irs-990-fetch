@@ -11,9 +11,9 @@ db.algoliaTmp.aggregate([
       'City': { $first: '$Algolia.City' },
       'State': { $first: '$Algolia.State'},
       'isLikelyStaffed': { $first: '$Algolia.isLikelyStaffed' },
-      'GrantMax': { $first: '$Algolia.grantMax' },
-      'GrantMin': { $first: '$Algolia.grantMin' },
-      'GrantMedian': { $first: '$Algolia.grantMedian' },
+      'GrantMax': { $first: '$Algolia.GrantMax' },
+      'GrantMin': { $first: '$Algolia.GrantMin' },
+      'GrantMedian': { $first: '$Algolia.GrantMedian' },
       'Filings': { 
         $push: {
           'TaxPeriod': '$Algolia.TaxPeriod',
