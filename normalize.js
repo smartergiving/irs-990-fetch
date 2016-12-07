@@ -1,7 +1,7 @@
 db.algoliaTmp.find().forEach(function(u){
-var algolia = {};
+  
+  var algolia = {};
 
-  //var schema = u.Return.attributes.returnVersion;
   var ein = u.Index.EIN;
   var organizationName = u.Index.OrganizationName;
   var assets = null;
@@ -12,20 +12,24 @@ var algolia = {};
   var taxYear = null;
   var url = u.Index.URL;
 
-  //Capture IRS structural error
-  //It appears certain organizations are listed in the index as filing Form 990PF, despite being 990 filers
-  //It appears to be mostly community hospitals, e.g. https://s3.amazonaws.com/irs-form-990/201113139349302361_public.xml
+
+  /** Capture IRS structural error **/
+  // It appears certain organizations are listed in the index as filing Form 990PF, despite being 990 filers
+  // It appears to be mostly community hospitals, e.g. https://s3.amazonaws.com/irs-form-990/201113139349302361_public.xml
   if (u.Return.ReturnData.IRS990) {
     return;
   }
 
-  //Assets
+
+  /** Assets **/
   assets = u.Return.ReturnData.IRS990PF.FMVAssetsEOYAmt || u.Return.ReturnData.IRS990PF.FMVAssetsEOY || null;
 
-  //Tax Year
+
+  /** Tax Year **/
   taxYear = u.Return.ReturnHeader.TaxYr || u.Return.ReturnHeader.TaxYear || null;
 
-  //US or Foreign Address
+
+  /** US or Foreign Address **/
   var us = u.Return.ReturnHeader.Filer.USAddress;
   var foreign = u.Return.ReturnHeader.Filer.ForeignAddress;
 
@@ -37,7 +41,7 @@ var algolia = {};
     state = 'Foreign';
   }
   
-  //Website
+  /** Website **/
   var websiteNew = u.Return.ReturnData.IRS990PF.StatementsRegardingActyGrp;
   var websiteOld = u.Return.ReturnData.IRS990PF.StatementsRegardingActivities;
 
@@ -50,27 +54,29 @@ var algolia = {};
       website = websiteOld.WebsiteAddress;
     }
   }
-
-  //Format websites
-  //TODO Handle edge cases like https://s3.amazonaws.com/irs-form-990/201533179349100823_public.xml (e.g. no domain)
            
-  if (website && website.match(/(?:(?:https?):\/\/)/i)) { //Check if properly formatted url
+  if (website && website.match(/(?:(?:https?):\/\/)/i)) { // Check if properly formatted url
     website = website;
-  } else if (website && website.match(/(^www.)/i)) {  //Check if www.
+  } else if (website && website.match(/(^www.)/i)) {  // Check if www.
     website = 'http://' + website;
-  } else if (website && website.match(/^[a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9]\.[a-zA-Z]{2,}$/i)) { //Check if apex domain (e.g. example.com)
+  } else if (website && website.match(/^[a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9]\.[a-zA-Z]{2,}$/i)) { // Check if apex domain (e.g. example.com)
     website = 'http://' + website;  
-  } else if (website && website.match(/^([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})$/i)) { //Check if email address
+  } else if (website && website.match(/^([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})$/i)) { // Check if email address
     website = 'mailto:' + website;    
-  } else { //Malformed website
+  } else { // Malformed website
     website = null;
   }
+  // TODO Handle edge cases like https://s3.amazonaws.com/irs-form-990/201533179349100823_public.xml (e.g. no domain)
+
+  var hasWebsite = 'false'; // HACK Algolia cannot handle boolean searches
 
   if (website) {
   	website = website.toLowerCase();
+    hasWebsite = 'true';
   }
 
-  //Board Members & Staff
+
+  /** Board Members & Staff **/
   var people = [];
   var peopleArray = u.Return.ReturnData.IRS990PF.OfficerDirTrstKeyEmplInfoGrp || u.Return.ReturnData.IRS990PF.OfcrDirTrusteesKeyEmployeeInfo || null;
   var personBoard = peopleArray.OfficerDirTrstKeyEmplGrp || peopleArray.OfcrDirTrusteesOrKeyEmployee || null;
@@ -108,12 +114,9 @@ var algolia = {};
   }
 
 
-  //TODO Set a field equal to true if grantmaker has professional staff
-
-
-  //Grants
+  /** Grants **/
   var grants = [];
-  var grantAmounts = []; //Used to calculate min/max/median
+  var grantAmounts = []; // Used to calculate min/max/median
   var grantsArray = u.Return.ReturnData.IRS990PF.SupplementaryInformationGrp || u.Return.ReturnData.IRS990PF.SupplementaryInformation || null;
   var eachGrant;
   if (grantsArray) {
@@ -157,7 +160,7 @@ var algolia = {};
   var grantMin = getMin(grantAmounts);
 
 
-  //Construct object
+  /** Construct object **/
   algolia = {
     'objectID': ein,
     'EIN': ein,
@@ -170,12 +173,14 @@ var algolia = {};
     'TaxYear': Number(taxYear),
     'URL': url,
     'isLikelyStaffed': isLikelyStaffed,
+    'hasWebsite': hasWebsite,
     'GrantMax': grantMax,
     'GrantMin': grantMin,
     'GrantMedian': grantMedian
   };
 
-  //Helper functions
+
+  /** Helper functions **/
   function getMedian(args) {
 	  if (!args.length) {return 0;}
 	  //var numbers = args.slice(0).sort((a,b) => a - b);
@@ -205,7 +210,8 @@ var algolia = {};
     }
   }
 
-	//Update documents
+
+	/** Update documents **/
   db.algoliaTmp.update(
   	u, 
   	{ $set: {'Algolia': algolia}}
