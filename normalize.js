@@ -176,7 +176,9 @@ db.algoliaTmp.find().forEach(function(u){
     'hasWebsite': hasWebsite,
     'GrantMax': grantMax,
     'GrantMin': grantMin,
-    'GrantMedian': grantMedian
+    'GrantMedian': grantMedian,
+    'Grants': grants,
+    'People': people
   };
 
 
