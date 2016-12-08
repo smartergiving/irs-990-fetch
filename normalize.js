@@ -68,11 +68,11 @@ db.algoliaTmp.find().forEach(function(u){
   }
   // TODO Handle edge cases like https://s3.amazonaws.com/irs-form-990/201533179349100823_public.xml (e.g. no domain)
 
-  var hasWebsite = 'false'; // HACK Algolia cannot handle boolean searches
+  var hasWebsite = false;
 
   if (website) {
   	website = website.toLowerCase();
-    hasWebsite = 'true';
+    hasWebsite = true;
   }
 
 
@@ -118,10 +118,26 @@ db.algoliaTmp.find().forEach(function(u){
   var grants = [];
   var grantAmounts = []; // Used to calculate min/max/median
   var grantsArray = u.Return.ReturnData.IRS990PF.SupplementaryInformationGrp || u.Return.ReturnData.IRS990PF.SupplementaryInformation || null;
+  var grantCount = 0;
+  var hasGrants = false;
   var eachGrant;
   if (grantsArray) {
   	eachGrant = grantsArray.GrantOrContributionPdDurYrGrp || grantsArray.GrantOrContriPaidDuringYear || null;
   }
+
+  if (grantsArray && eachGrant instanceof Array) {
+    grantCount = eachGrant.length;
+    hasGrants = true;
+    eachGrant.forEach(convertGrants);
+  } else if (grantsArray && eachGrant) {
+    hasGrants = true;
+    grantCount = 1;
+    convertGrants(eachGrant);
+  }
+
+  var grantMedian = getMedian(grantAmounts);
+  var grantMax = getMax(grantAmounts);
+  var grantMin = getMin(grantAmounts);
 
   function convertGrants(each) {
     var name = null;
@@ -133,8 +149,8 @@ db.algoliaTmp.find().forEach(function(u){
       name  = each.RecipientBusinessName.BusinessNameLine1Txt || each.RecipientPersonNm || each.RecipientBusinessName.BusinessNameLine1 || null;
     }
     if (each.RecipientUSAddress) {
-    	city = each.RecipientUSAddress.CityNm || each.RecipientUSAddress.City || null;
-    	state = each.RecipientUSAddress.StateAbbreviationCd ||  each.RecipientUSAddress.State || null;
+      city = each.RecipientUSAddress.CityNm || each.RecipientUSAddress.City || null;
+      state = each.RecipientUSAddress.StateAbbreviationCd ||  each.RecipientUSAddress.State || null;
     }
     var amount = each.Amt || each.Amount || null;
     var purpose = each.GrantOrContributionPurposeTxt || each.PurposeOfGrantOrContribution | null;
@@ -145,19 +161,11 @@ db.algoliaTmp.find().forEach(function(u){
       'Amount': Number(amount),
       'Purpose': purpose
     };
-    grants.push(grant);
+    if (amount && Number(amount) >= 10000) {
+      grants.push(grant);
+    }
     grantAmounts.push(Number(amount));
   }
-
-  if (grantsArray && eachGrant instanceof Array) {
-    eachGrant.forEach(convertGrants);
-  } else if (grantsArray && eachGrant) {
-    convertGrants(eachGrant);
-  }
-
-  var grantMedian = getMedian(grantAmounts);
-  var grantMax = getMax(grantAmounts);
-  var grantMin = getMin(grantAmounts);
 
 
   /** Construct object **/
@@ -174,9 +182,11 @@ db.algoliaTmp.find().forEach(function(u){
     'URL': url,
     'isLikelyStaffed': isLikelyStaffed,
     'hasWebsite': hasWebsite,
+    'hasGrants': hasGrants,
     'GrantMax': grantMax,
     'GrantMin': grantMin,
     'GrantMedian': grantMedian,
+    'GrantCount': grantCount,
     'Grants': grants,
     'People': people
   };

@@ -12,6 +12,7 @@ db.algoliaTmp.aggregate([
       'State': { $first: '$Algolia.State'},
       'isLikelyStaffed': { $first: '$Algolia.isLikelyStaffed' },
       'hasWebsite': { $first: '$Algolia.hasWebsite' },
+      'hasGrants': { $first: '$Algolia.hasGrants' },
       'GrantMax': { $first: '$Algolia.GrantMax' },
       'GrantMin': { $first: '$Algolia.GrantMin' },
       'GrantMedian': { $first: '$Algolia.GrantMedian' },
@@ -21,7 +22,8 @@ db.algoliaTmp.aggregate([
           'TaxYear': '$Algolia.TaxYear',
           'URL': '$Algolia.URL'
         }
-      }
+      },
+      'Grants': {$first: '$Algolia.Grants'}
     } 
   },
   { $out: 'algolia' }
