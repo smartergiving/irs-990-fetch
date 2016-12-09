@@ -129,6 +129,9 @@ db.algoliaTmp.find().forEach(function(u){
     grantCount = eachGrant.length;
     hasGrants = true;
     eachGrant.forEach(convertGrants);
+    if (grantCount > 10000) {
+      print('GrantCount: ' + grantCount + ' || EIN: '+ u.Index.EIN + ' || TaxPeriod: '+ u.Index.TaxPeriod +' || URL: ' + u.Index.URL + ' || Name: ' + u.Index.OrganizationName);
+    }
   } else if (grantsArray && eachGrant) {
     hasGrants = true;
     grantCount = 1;
@@ -161,7 +164,7 @@ db.algoliaTmp.find().forEach(function(u){
       'Amount': Number(amount),
       'Purpose': purpose
     };
-    if (amount && Number(amount) >= 10000) {
+    if (amount && Number(amount) >= 5000) {
       grants.push(grant);
     }
     grantAmounts.push(Number(amount));
@@ -222,10 +225,12 @@ db.algoliaTmp.find().forEach(function(u){
     }
   }
 
-
-	/** Update documents **/
+  /** Update documents **/
   db.algoliaTmp.update(
-  	u, 
-  	{ $set: {'Algolia': algolia}}
+    u, 
+    { 
+      $set: { 'Algolia': algolia }
+    }
   );
+
 });
