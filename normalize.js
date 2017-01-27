@@ -120,6 +120,7 @@ db.algoliaTmp.find().forEach(function(u){
   var grantsArray = u.Return.ReturnData.IRS990PF.SupplementaryInformationGrp || u.Return.ReturnData.IRS990PF.SupplementaryInformation || null;
   var grantCount = 0;
   var hasGrants = false;
+  var hasRecentGrants = false;
   var eachGrant;
   if (grantsArray) {
   	eachGrant = grantsArray.GrantOrContributionPdDurYrGrp || grantsArray.GrantOrContriPaidDuringYear || null;
@@ -137,6 +138,8 @@ db.algoliaTmp.find().forEach(function(u){
     grantCount = 1;
     convertGrants(eachGrant);
   }
+
+  calcHasRecentGrants();
 
   var grantMedian = getMedian(grantAmounts);
   var grantMax = getMax(grantAmounts);
@@ -186,6 +189,7 @@ db.algoliaTmp.find().forEach(function(u){
     'isLikelyStaffed': isLikelyStaffed,
     'hasWebsite': hasWebsite,
     'hasGrants': hasGrants,
+    'hasRecentGrants': hasRecentGrants,
     'GrantMax': grantMax,
     'GrantMin': grantMin,
     'GrantMedian': grantMedian,
@@ -196,6 +200,12 @@ db.algoliaTmp.find().forEach(function(u){
 
 
   /** Helper functions **/
+  function calcHasRecentGrants() {
+    if (hasGrants === true && Number(taxYear) >= 2015) {
+      hasRecentGrants = true;
+    }
+  }
+
   function getMedian(args) {
 	  if (!args.length) {return 0;}
 	  //var numbers = args.slice(0).sort((a,b) => a - b);

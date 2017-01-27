@@ -14,6 +14,7 @@ db.algoliaTmp.aggregate(
         'isLikelyStaffed': { $first: '$Algolia.isLikelyStaffed' },
         'hasWebsite': { $first: '$Algolia.hasWebsite' },
         'hasGrants': { $first: '$Algolia.hasGrants' },
+        'hasRecentGrants': { $first: '$Algolia.hasRecentGrants' },
         'GrantMax': { $first: '$Algolia.GrantMax' },
         'GrantMin': { $first: '$Algolia.GrantMin' },
         'GrantMedian': { $first: '$Algolia.GrantMedian' },
