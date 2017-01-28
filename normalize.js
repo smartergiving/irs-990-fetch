@@ -134,7 +134,7 @@ db.algoliaTmp.find().forEach(function(u){
       print('GrantCount: ' + grantCount + ' || EIN: '+ u.Index.EIN + ' || TaxPeriod: '+ u.Index.TaxPeriod +' || URL: ' + u.Index.URL + ' || Name: ' + u.Index.OrganizationName);
     }
   } else if (grantsArray && eachGrant) {
-    print('eachGrant: ' + eachGrant);
+    //print('eachGrant: ' + eachGrant);
     hasGrants = true;
     grantCount = 1;
     convertGrants(eachGrant);
@@ -172,9 +172,16 @@ db.algoliaTmp.find().forEach(function(u){
       'Amount': Number(amount),
       'Purpose': purpose
     };
-    if (amount && Number(amount) >= 5000) {
+    // Limit grants to those over $5k if grantmakers has more than 10k total grants
+    // Helps maintain 16MB MongoDB document size limit
+    if (grantCount > 10000) {
+      if (amount && Number(amount) >= 5000) {
+        grants.push(grant);
+      }
+    } else {
       grants.push(grant);
     }
+    
     grantAmounts.push(Number(amount));
   }
 
