@@ -134,6 +134,7 @@ db.algoliaTmp.find().forEach(function(u){
       print('GrantCount: ' + grantCount + ' || EIN: '+ u.Index.EIN + ' || TaxPeriod: '+ u.Index.TaxPeriod +' || URL: ' + u.Index.URL + ' || Name: ' + u.Index.OrganizationName);
     }
   } else if (grantsArray && eachGrant) {
+    print('eachGrant: ' + eachGrant);
     hasGrants = true;
     grantCount = 1;
     convertGrants(eachGrant);
@@ -149,6 +150,10 @@ db.algoliaTmp.find().forEach(function(u){
     var name = null;
     var city = null;
     var state = null;
+    //Handle null scenario e.g https://s3.amazonaws.com/irs-form-990/201621379349103872_public.xml
+    if (!each) {
+      return false;
+    }
     if (each.RecipientPersonNm) {
       name = each.RecipientPersonNm;
     } else if (each.RecipientBusinessName) {
