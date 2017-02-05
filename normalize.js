@@ -159,6 +159,7 @@ db.algoliaTmp.find().forEach(function(u){
     } else if (each.RecipientBusinessName) {
       name  = each.RecipientBusinessName.BusinessNameLine1Txt || each.RecipientPersonNm || each.RecipientBusinessName.BusinessNameLine1 || null;
     }
+    //TODO Add 2011 RecipientPersonName e.g. https://s3.amazonaws.com/irs-form-990/201203549349100200_public.xml
     if (each.RecipientUSAddress) {
       city = each.RecipientUSAddress.CityNm || each.RecipientUSAddress.City || null;
       state = each.RecipientUSAddress.StateAbbreviationCd ||  each.RecipientUSAddress.State || null;
