@@ -6,7 +6,7 @@ var xml2jsParser = require('xml2js').parseString;
 var request_promise = require('request-promise');
 
 //IRS Indexes
-var year = '2011';
+var year = '2017';
 var index = 'https://s3.amazonaws.com/irs-form-990/index_' + year + '.json';
 
 //AWS
@@ -17,7 +17,7 @@ var s3 = new AWS.S3();
 //Mongo
 var dbHostPort = 'localhost:27017';
 var dbName = 'irs';
-var dbCollection = 'filings' + year;
+var dbCollection = 'combined' + year;
 var db = require('mongodb-promises').db(dbHostPort, dbName);
 var mycollection = db.collection(dbCollection);
 
