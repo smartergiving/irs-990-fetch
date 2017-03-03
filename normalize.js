@@ -84,6 +84,7 @@ db.algoliaTmp.find().forEach(function(u){
 
   var isLikelyStaffed = false;
 
+  //TODO Flatten Names with xml attributes. Currently captures name as object if xml attributes exist
   function convertPeople(each) {
       var name = each.PersonNm || each.PersonName || each.Name || null;
       var title = each.TitleTxt || each.Title || null;
