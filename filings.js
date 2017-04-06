@@ -6,7 +6,7 @@ var xml2jsParser = require('xml2js').parseString;
 var request_promise = require('request-promise');
 
 //IRS Indexes
-var year = '2016';
+var year = '2017';
 var index = 'https://s3.amazonaws.com/irs-form-990/index_' + year + '.json';
 
 //AWS

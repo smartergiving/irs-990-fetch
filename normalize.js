@@ -1,6 +1,6 @@
-db.algoliaTmp.find().forEach(function(u){
+db.normalized.find().forEach(function(u){
   
-  var algolia = {};
+  var normalized = {};
 
   var ein = u.Index.EIN;
   var organizationName = u.Index.OrganizationName;
@@ -17,7 +17,8 @@ db.algoliaTmp.find().forEach(function(u){
   // It appears certain organizations are listed in the index as filing Form 990PF, despite being 990 filers
   // It appears to be mostly community hospitals, e.g. https://s3.amazonaws.com/irs-form-990/201113139349302361_public.xml
   if (u.Return.ReturnData.IRS990) {
-    return;
+    db.normalized.remove(u); //Delete document
+    return; //Skip rest of function
   }
 
 
@@ -85,6 +86,7 @@ db.algoliaTmp.find().forEach(function(u){
   var isLikelyStaffed = false;
 
   //TODO Flatten Names with xml attributes. Currently captures name as object if xml attributes exist
+  //Currently handling these edge cases in the HTML template itself
   function convertPeople(each) {
       var name = each.PersonNm || each.PersonName || each.Name || null;
       var title = each.TitleTxt || each.Title || null;
@@ -166,7 +168,7 @@ db.algoliaTmp.find().forEach(function(u){
       state = each.RecipientUSAddress.StateAbbreviationCd ||  each.RecipientUSAddress.State || null;
     }
     var amount = each.Amt || each.Amount || null;
-    var purpose = each.GrantOrContributionPurposeTxt || each.PurposeOfGrantOrContribution | null;
+    var purpose = each.GrantOrContributionPurposeTxt || each.PurposeOfGrantOrContribution || null;
     var grant = {
       'Name': name,
       'City': toTitleCase(city),
@@ -189,7 +191,7 @@ db.algoliaTmp.find().forEach(function(u){
 
 
   /** Construct object **/
-  algolia = {
+  normalized = {
     'objectID': ein,
     'EIN': ein,
     'OrganizationName': organizationName,
@@ -250,10 +252,10 @@ db.algoliaTmp.find().forEach(function(u){
   }
 
   /** Update documents **/
-  db.algoliaTmp.update(
+  db.normalized.update(
     u, 
     { 
-      $set: { 'Algolia': algolia }
+      $set: { 'Normalized': normalized }
     }
   );
 

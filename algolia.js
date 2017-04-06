@@ -1,33 +1,33 @@
-db.algoliaTmp.aggregate(
+db.normalized.aggregate(
   [
-    { $sort: { 'Algolia.EIN': 1, 'Algolia.TaxPeriod': -1 } },
+    { $sort: { 'Normalized.EIN': 1, 'Normalized.TaxPeriod': -1 } },
     { $group:
       {
-        '_id': '$Algolia.EIN',
-        'objectID': { $first:'$Algolia.EIN' },
-        'EIN': { $first:'$Algolia.EIN' },
-        'OrganizationName': { $first:'$Algolia.OrganizationName' },
-        'Assets': { $first: '$Algolia.Assets' },
-        'Website': { $first: '$Algolia.Website' },
-        'City': { $first: '$Algolia.City' },
-        'State': { $first: '$Algolia.State'},
-        'isLikelyStaffed': { $first: '$Algolia.isLikelyStaffed' },
-        'hasWebsite': { $first: '$Algolia.hasWebsite' },
-        'hasGrants': { $first: '$Algolia.hasGrants' },
-        'hasRecentGrants': { $first: '$Algolia.hasRecentGrants' },
-        'GrantMax': { $first: '$Algolia.GrantMax' },
-        'GrantMin': { $first: '$Algolia.GrantMin' },
-        'GrantMedian': { $first: '$Algolia.GrantMedian' },
-        'GrantCount': { $first: '$Algolia.GrantCount' },
+        '_id': '$Normalized.EIN',
+        'objectID': { $first:'$Normalized.EIN' },
+        'EIN': { $first:'$Normalized.EIN' },
+        'OrganizationName': { $first:'$Normalized.OrganizationName' },
+        'Assets': { $first: '$Normalized.Assets' },
+        'Website': { $first: '$Normalized.Website' },
+        'City': { $first: '$Normalized.City' },
+        'State': { $first: '$Normalized.State'},
+        'isLikelyStaffed': { $first: '$Normalized.isLikelyStaffed' },
+        'hasWebsite': { $first: '$Normalized.hasWebsite' },
+        'hasGrants': { $first: '$Normalized.hasGrants' },
+        'hasRecentGrants': { $first: '$Normalized.hasRecentGrants' },
+        'GrantMax': { $first: '$Normalized.GrantMax' },
+        'GrantMin': { $first: '$Normalized.GrantMin' },
+        'GrantMedian': { $first: '$Normalized.GrantMedian' },
+        'GrantCount': { $first: '$Normalized.GrantCount' },
         'Filings': { 
           $push: {
-            'TaxPeriod': '$Algolia.TaxPeriod',
-            'TaxYear': '$Algolia.TaxYear',
-            'URL': '$Algolia.URL'
+            'TaxPeriod': '$Normalized.TaxPeriod',
+            'TaxYear': '$Normalized.TaxYear',
+            'URL': '$Normalized.URL'
           }
         },
-        'Grants': { $first: '$Algolia.Grants'},
-        'People': { $first: '$Algolia.People'}
+        'Grants': { $first: '$Normalized.Grants'},
+        'People': { $first: '$Normalized.People'}
       } 
     },
     { $out: 'algolia' }
