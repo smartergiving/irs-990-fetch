@@ -1,6 +1,6 @@
 {
-  "name": "irs-nodejs-fetch",
-  "version": "0.0.3",
+  "name": "irs-990-fetch",
+  "version": "0.0.1",
   "description": "Lightweight scripts to fetch, parse, and store machine readable IRS Form 990PFs",
   "main": "awsIndexFoundations.js",
   "scripts": {
@@ -22,5 +22,14 @@
     "stream-to-mongo-db": "^1.0.17",
     "util": "^0.10.3",
     "xml2js": "^0.4.17"
-  }
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/smartergiving/irs-990-fetch.git"
+  },
+  "bugs": {
+    "url": "https://github.com/smartergiving/irs-990-fetch/issues"
+  },
+  "homepage": "https://github.com/smartergiving/irs-990-fetch#readme"
 }
