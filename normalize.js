@@ -88,6 +88,7 @@ db.normalized.find().forEach(function(u){
   //TODO Flatten Names with xml attributes. Currently captures name as object if xml attributes exist
   //Currently handling these edge cases in the HTML template itself
   function convertPeople(each) {
+      //TODO Capture name if business, e.g. https://www.grantmakers.io/profiles/931307278/ (2012: BusinessName.BusinessNameLine1)
       var name = each.PersonNm || each.PersonName || each.Name || null;
       var title = each.TitleTxt || each.Title || null;
       var hours = each.AverageHrsPerWkDevotedToPosRt || each.AvgHoursPerWkDevotedToPosition || each.AverageHoursPerWeek || null;
