@@ -4,6 +4,7 @@ var Promise = require('bluebird');
 var JSONStream = require('JSONStream');
 var xml2jsParser = require('xml2js').parseString;
 var request_promise = require('request-promise');
+var secrets = require('./secrets');
 
 //IRS Indexes
 var year = '2017';
@@ -15,9 +16,23 @@ AWS.config.update({region: 'us-east-1'});
 var s3 = new AWS.S3();
 
 //Mongo
-var dbHostPort = 'localhost:27017';
-var dbName = 'irs';
-var dbCollection = 'combined' + year;
+//local db
+//var dbHostPort = 'localhost:27017';
+
+//remote db
+//start
+var remoteUser = secrets.gce.user;
+var remotePassword = secrets.gce.password;
+var remoteHost = secrets.gce.host;
+var remotePort = secrets.gce.port;
+var dbHostPort =  remoteUser + ':' + 
+                  remotePassword + '@' +
+                  remoteHost + ':' +
+                  remotePort;
+//end
+
+var dbName  = 'irs';
+var dbCollection = 'irs' + year;
 var db = require('mongodb-promises').db(dbHostPort, dbName);
 var mycollection = db.collection(dbCollection);
 
