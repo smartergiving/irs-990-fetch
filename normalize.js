@@ -85,11 +85,19 @@ db.normalized.find().forEach(function(u){
 
   var isLikelyStaffed = false;
 
-  //TODO Flatten Names with xml attributes. Currently captures name as object if xml attributes exist
-  //Currently handling these edge cases in the HTML template itself
+  // TODO Flatten Names with xml attributes. Currently captures name as object if xml attributes exist
+  // Currently handling these edge cases in the HTML template itself
   function convertPeople(each) {
-      //TODO Capture name if business, e.g. https://www.grantmakers.io/profiles/931307278/ (2012: BusinessName.BusinessNameLine1)
-      var name = each.PersonNm || each.PersonName || each.Name || null;
+      // TODO Capture name if business - 2602 records 
+      // 2012: BusinessName.BusinessNameLine1 - https://www.grantmakers.io/profiles/931307278/
+      // 2015: BusinessName.BusinessNameLine1Txt - https://s3.amazonaws.com/irs-form-990/201631689349100408_public.xml
+      // Query: db.getCollection('algolia').find({'People': {$elemMatch:{"Name":{$exists: true},"Name":null}}})
+      // https://github.com/grantmakers/grantmakers.github.io/issues/8
+      var name = each.PersonNm || each.PersonName || each.Name || each.BusinessName || null;
+      if (name == each.BusinessName) {
+        var businessObj = each.BusinessName;
+        name = businessObj.BusinessNameLine1Txt || businessObj.BusinessNameLine1 || null;
+      }
       var title = each.TitleTxt || each.Title || null;
       var hours = each.AverageHrsPerWkDevotedToPosRt || each.AvgHoursPerWkDevotedToPosition || each.AverageHoursPerWeek || null;
       var comp = each.CompensationAmt || each.Compensation || null;
