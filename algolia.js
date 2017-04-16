@@ -30,7 +30,7 @@ db.normalized.aggregate(
         'People': { $first: '$Normalized.People'}
       } 
     },
-    { $out: 'algolia' }
+    { $out: 'aggregated' }
   ],
   { allowDiskUse:true }
 );
