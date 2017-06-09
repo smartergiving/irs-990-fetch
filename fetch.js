@@ -97,7 +97,7 @@ request(index)
         });
     }
   })
-  .on('finish', function() {
+  .on('end', function() {
     console.log('-----JSON Request is Finished-----');
   })
   .on('error', function(err) {

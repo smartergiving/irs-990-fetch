@@ -1,8 +1,8 @@
 {
   "name": "irs-990-fetch",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Lightweight scripts to fetch, parse, and store machine readable IRS Form 990PFs",
-  "main": "awsIndexFoundations.js",
+  "main": "fetch.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
