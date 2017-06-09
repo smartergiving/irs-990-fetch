@@ -1,5 +1,5 @@
 # IRS Form 990-PF Fetch :: Node.js Edition
-Lightweight but powerful Node.js scripts to fetch all machine-readable IRS Form 990-PFs and insert into a MongoDB database. 
+Lightweight but powerful Node.js scripts to fetch all machine-readable IRS Form 990-PFs and insert into a MongoDB database.
 
 Datasets: [Public IRS data set hosted by Amazon AWS](https://aws.amazon.com/public-data-sets/irs-990/)  
 
@@ -14,9 +14,15 @@ Datasets: [Public IRS data set hosted by Amazon AWS](https://aws.amazon.com/publ
 ## The Scripts  
 
  1. `indexes.js` - fetches index listings relating to IRS Form 990-PF filings for the specified tax year and inserts into MongoDB   
- 2. `filings.js` - fetches all IRS Form 990-PF filings for the specified tax year and inserts into MongoDB 
- 3. `combined.js` - similar to filings.js, but inserts index data as well 
- 3. `custom.js` - combines data from IRS indexes and respective tax filings to create a custom index. Currently used to power our [IRS Form 990-PF Search demo](https://smartergiving.org/irs-990-search/).  
+ 2. `filings.js` - fetches all IRS Form 990-PF filings for the specified tax year and inserts into MongoDB
+ 3. `fetch.js` - similar to filings.js, but inserts index data as well
+ 3. `custom.js` - combines data from IRS indexes and respective tax filings to create a custom index.   
+
+## Scripts Used by [Grantmakers.io](https://www.grantmakers.io/)
+
+ 1. `fetch.js` - Inserts individual index and filing info into MongoDB    
+ 2. `aggregate.js` - Combines info by EIN  
+ 3. `normalize.js` - Pulls specific information across tax year   
 
 ## Usage
 
@@ -38,7 +44,7 @@ See `troubleshoot.js` to log memory usage and toggle between using the npm reque
 
 ## Credits  
 
-A huge thank you to [Joseph Lepis](https://www.linkedin.com/in/joseph-lepis-2700934) for the architectural guidance and mentorship. If you find these scripts useful and appreciate [hard-boiled fiction](https://en.wikipedia.org/wiki/Hardboiled), check out Joe's debut novel, [On the Edge](https://www.amazon.com/Edge-J-B-Christopher-ebook/dp/B00GWTXZ64/). 
+A huge thank you to [Joseph Lepis](https://www.linkedin.com/in/joseph-lepis-2700934) for the architectural guidance and mentorship. If you find these scripts useful and appreciate [hard-boiled fiction](https://en.wikipedia.org/wiki/Hardboiled), check out Joe's debut novel, [On the Edge](https://www.amazon.com/Edge-J-B-Christopher-ebook/dp/B00GWTXZ64/).
 
 ## License  
 
@@ -63,4 +69,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
- 
