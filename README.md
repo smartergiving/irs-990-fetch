@@ -26,8 +26,6 @@ Datasets: [Public IRS data set hosted by Amazon AWS](https://aws.amazon.com/publ
 
 ## Usage
 
-
-
 iMac with 16GB RAM  
 `ulimit -n 4096 && mongod --dbpath ./data/db/`  
 `ulimit -n 4096 && node combined`  
@@ -36,7 +34,7 @@ MacBook Air with 8GB RAM (struggles)
 `ulimit -n 2048 && mongod --dbpath ./data/db/`  
 `ulimit -n 2048 && node combined`  
 
-*Note: The IRS no longer offers a single index for all filings. Thus, each script must be run once for each year (e.g. [toggle the year](https://github.com/smartergiving/irs-nodejs-fetch/blob/master/combined.js#L9)). *
+*Note: The IRS no longer offers a single index for all filings. Thus, each script must be run once for each year (e.g. [toggle the year](https://github.com/smartergiving/irs-990-fetch/blob/master/fetch.js#L10)). *
 
 ## Troubleshooting
 
