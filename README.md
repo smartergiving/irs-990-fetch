@@ -13,10 +13,9 @@ Datasets: [Public IRS data set hosted by Amazon AWS](https://aws.amazon.com/publ
 
 ## The Scripts  
 
- 1. `indexes.js` - fetches index listings relating to IRS Form 990-PF filings for the specified tax year and inserts into MongoDB   
- 2. `filings.js` - fetches all IRS Form 990-PF filings for the specified tax year and inserts into MongoDB
- 3. `fetch.js` - similar to filings.js, but inserts index data as well
- 3. `custom.js` - combines data from IRS indexes and respective tax filings to create a custom index.   
+ 1. `indexes.js` - Fetches index listings relating to IRS Form 990-PF filings for the specified tax year and inserts into MongoDB   
+ 2. `filings.js` - Fetches all IRS Form 990-PF filings for the specified tax year and inserts into MongoDB  
+ 3. `custom.js` - Combines data from IRS indexes and respective tax filings to create a custom index.   
 
 ## Scripts Used by [Grantmakers.io](https://www.grantmakers.io/)
 
@@ -34,11 +33,15 @@ MacBook Air with 8GB RAM (struggles)
 `ulimit -n 2048 && mongod --dbpath ./data/db/`  
 `ulimit -n 2048 && node combined`  
 
-*Note: The IRS no longer offers a single index for all filings. Thus, each script must be run once for each year (e.g. [toggle the year](https://github.com/smartergiving/irs-990-fetch/blob/master/fetch.js#L10)). *
+*Note: The IRS no longer offers a single index for all filings. Thus, each script must be run once for each year (e.g. [toggle the year](https://github.com/smartergiving/irs-990-fetch/blob/master/fetch.js#L10)).*
 
 ## Troubleshooting
 
 See `troubleshoot.js` to log memory usage and toggle between using the npm request-promise package and the AWS JavaScript SDK.
+
+## Experiments  
+
+Testing out Google Cloud functions (see `gcf_http` folder) - first up is a simple script to check for updates.
 
 ## Credits  
 
