@@ -1,3 +1,6 @@
+// CamelCase for js
+// Underscore for MongoDB keys
+// IRS uses PascalCase
 db.normalized.find().forEach(function(u) {
   let normalized = {};
   const ein = u.Index.EIN;
@@ -9,6 +12,10 @@ db.normalized.find().forEach(function(u) {
   const taxPeriod = u.Index.TaxPeriod;
   let taxYear = null;
   const url = u.Index.URL;
+  const lastUpdated = u.Index.LastUpdated;
+  const irsObjectId = u.Index.ObjectId;
+  const now = new Date('2017-06-09 17:54:03.061Z');
+  // TODO Pull directly from MongoDB updates collection
 
   /** Capture IRS structural error **/
   // It appears certain organizations are listed in the index as filing Form 990PF, despite being 990 filers
@@ -90,10 +97,10 @@ db.normalized.find().forEach(function(u) {
     let hours = each.AverageHrsPerWkDevotedToPosRt || each.AvgHoursPerWkDevotedToPosition || each.AverageHoursPerWeek || null;
     let comp = each.CompensationAmt || each.Compensation || null;
     let person = {
-      'Name': name,
-      'Title': title,
-      'Hours': Number(hours),
-      'Compensation': Number(comp),
+      'name': name,
+      'title': title,
+      'hours': Number(hours),
+      'compensation': Number(comp),
     };
     people.push(person);
     if (Number(hours) >= 35 && Number(comp) > 50000 ) {
@@ -130,7 +137,7 @@ db.normalized.find().forEach(function(u) {
     hasGrants = true;
     eachGrant.forEach(convertGrants);
     if (grantCount > 10000) {
-      print('GrantCount: ' + grantCount + ' || EIN: ' + u.Index.EIN + ' || TaxPeriod: ' + u.Index.TaxPeriod + ' || URL: ' + u.Index.URL + ' || Name: ' + u.Index.OrganizationName);
+      print('grant_count: ' + grantCount + ' || ein: ' + u.Index.EIN + ' || tax_period: ' + u.Index.TaxPeriod + ' || url: ' + u.Index.URL + ' || name: ' + u.Index.OrganizationName);
     }
   } else if (grantsArray && eachGrant) {
     // print('eachGrant: ' + eachGrant);
@@ -166,11 +173,11 @@ db.normalized.find().forEach(function(u) {
     let amount = each.Amt || each.Amount || null;
     let purpose = each.GrantOrContributionPurposeTxt || each.PurposeOfGrantOrContribution || null;
     let grant = {
-      'Name': recipientName,
-      'City': toTitleCase(recipientCity),
-      'State': recipientState,
-      'Amount': Number(amount),
-      'Purpose': purpose,
+      'name': recipientName,
+      'city': toTitleCase(recipientCity),
+      'state': recipientState,
+      'amount': Number(amount),
+      'purpose': purpose,
     };
     // Limit grants to those over $5k if grantmakers has more than 10k total grants
     // Helps maintain 16MB MongoDB document size limit
@@ -187,26 +194,29 @@ db.normalized.find().forEach(function(u) {
 
   /** Construct object **/
   normalized = {
-    'objectID': ein,
-    'EIN': ein,
-    'OrganizationName': organizationName,
-    'Assets': Number(assets),
-    'Website': website,
-    'City': toTitleCase(city),
-    'State': state,
-    'TaxPeriod': Number(taxPeriod),
-    'TaxYear': Number(taxYear),
-    'URL': url,
-    'isLikelyStaffed': isLikelyStaffed,
-    'hasWebsite': hasWebsite,
-    'hasGrants': hasGrants,
-    'hasRecentGrants': hasRecentGrants,
-    'GrantMax': grantMax,
-    'GrantMin': grantMin,
-    'GrantMedian': grantMedian,
-    'GrantCount': grantCount,
-    'Grants': grants,
-    'People': people,
+//    'objectID': ein, // For Algolia - note departure from strict CamelCase
+    'object_id_irs': irsObjectId,
+    'last_updated_irs': new Date(lastUpdated),
+    'last_updated': now,
+    'ein': ein,
+    'organization_name': organizationName,
+    'assets': Number(assets),
+    'website': website,
+    'city': toTitleCase(city),
+    'state': state,
+    'tax_period': Number(taxPeriod),
+    'tax_year': Number(taxYear),
+    'url': url,
+    'is_likely_staffed': isLikelyStaffed,
+    'has_website': hasWebsite,
+    'has_grants': hasGrants,
+    'has_recent_grants': hasRecentGrants,
+    'grant_max': grantMax,
+    'grant_min': grantMin,
+    'grant_median': grantMedian,
+    'grant_count': grantCount,
+    'grants': grants,
+    'people': people,
   };
 
   /** Helper functions **/
@@ -249,7 +259,7 @@ db.normalized.find().forEach(function(u) {
   db.normalized.update(
     u,
     {
-      '$set': { 'Normalized': normalized },
+      '$set': { 'normalized': normalized },
     }
   );
 });

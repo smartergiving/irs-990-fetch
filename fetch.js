@@ -3,12 +3,17 @@ const es = require('event-stream');
 const Promise = require('bluebird');
 const JSONStream = require('JSONStream');
 const xml2jsParser = require('xml2js').parseString;
-// const request_promise = require('request-promise');
 // const secrets = require('./secrets');
 
 // IRS Indexes
-const year = '2017';
-const index = 'https://s3.amazonaws.com/irs-form-990/index_' + year + '.json';
+const targetYear = '2017'; // Enter the year to fetch
+const index = 'https://s3.amazonaws.com/irs-form-990/index_' + targetYear + '.json';
+
+// Date of Update
+const dateObj = new Date();
+const month = (dateObj.getUTCMonth() + 1 < 10 ? '0' : '') + (dateObj.getUTCMonth() + 1);
+const day = (dateObj.getUTCDate() < 10 ? '0' : '') + dateObj.getUTCDate();
+const year = dateObj.getFullYear().toString().substr(2, 2);
 
 // AWS
 const AWS = require('aws-sdk');
@@ -20,7 +25,6 @@ const s3 = new AWS.S3();
 const dbHostPort = 'localhost:27017';
 
 // remote db
-// start
 /*
 const remoteUser = secrets.gce.user;
 const remotePassword = secrets.gce.password;
@@ -30,11 +34,11 @@ const dbHostPort =  remoteUser + ':' +
                   remotePassword + '@' +
                   remoteHost + ':' +
                   remotePort;
-                  */
-// end
+*/
+
 
 const dbName  = 'irs';
-const dbCollection = 'irs' + year;
+const dbCollection = 'irs' + targetYear + '_' + month + day + year;
 const db = require('mongodb-promises').db(dbHostPort, dbName);
 const mycollection = db.collection(dbCollection);
 
@@ -47,7 +51,7 @@ request(index)
     console.error('-----Index Request Error-----');
     console.error(err);
   })
-  .pipe(JSONStream.parse(['Filings' + year, true]))
+  .pipe(JSONStream.parse(['Filings' + targetYear, true]))
   .on('error', function(err) {
     console.error('-----JSONParse Error-----');
     console.error(err);
@@ -76,6 +80,7 @@ request(index)
           let obj = {};
 
           obj = {
+            '_id': data.ObjectId,
             'Index': data,
             'Return': resultJS.Return,
           };
@@ -99,6 +104,7 @@ request(index)
   })
   .on('end', function() {
     console.log('-----JSON Request is Finished-----');
+    return false;
   })
   .on('error', function(err) {
     console.error('-----mapSync Error-----');
