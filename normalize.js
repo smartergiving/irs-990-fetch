@@ -194,7 +194,6 @@ db.normalized.find().forEach(function(u) {
 
   /** Construct object **/
   normalized = {
-//    'objectID': ein, // For Algolia - note departure from strict CamelCase
     'object_id_irs': irsObjectId,
     'last_updated_irs': new Date(lastUpdated),
     'last_updated': now,
