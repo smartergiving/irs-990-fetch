@@ -6,13 +6,12 @@ const JSONStream = require('JSONStream');
 const year = '2017';
 const index = 'https://s3.amazonaws.com/irs-form-990/index_' + year + '.json';
 
-// Count
-let count = 0;
-
 // Timer
 let start = new Date().getTime();
 
 exports.checkForUpdates = function checkForUpdates(req, res) {
+  // Count
+  let count = 0;
   request(index)
     .on('error', function(err) {
       console.error('-----Index Request Error-----');
@@ -33,7 +32,12 @@ exports.checkForUpdates = function checkForUpdates(req, res) {
     })
     .on('end', function() {
       let elapsed = new Date().getTime() - start;
-      res.send('Total objects: ' + count + ' | Time to complete: ' + elapsed);
+      res.send(
+        'Total objects: ' + count + ' | ' +
+        'Time to complete: ' + elapsed + '\n' +
+        'Last update count: 18705 \n'
+      );
+      count = 0;
     })
     .on('error', function(err) {
       console.error('-----mapSync Error-----');
