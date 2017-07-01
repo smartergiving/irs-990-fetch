@@ -22,7 +22,10 @@ const s3 = new AWS.S3();
 
 // Mongo
 // local db
-const dbHostPort = 'localhost:27017';
+// const dbHostPort = 'localhost:27017';
+
+// GCE shell
+const dbHostPort = '127.0.0.1:27017';
 
 // remote db
 /*
