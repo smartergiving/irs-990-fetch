@@ -14,7 +14,7 @@ db.normalized.find().forEach(function(u) {
   const url = u.Index.URL;
   const lastUpdated = u.Index.LastUpdated;
   const irsObjectId = u.Index.ObjectId;
-  const now = new Date('2017-06-09 17:54:03.061Z');
+  const now = new Date('2017-06-29T17:54:03.061Z');
   // TODO Pull directly from MongoDB updates collection
 
   /** Capture IRS structural error **/
@@ -188,6 +188,8 @@ db.normalized.find().forEach(function(u) {
     } else {
       grants.push(grant);
     }
+
+    // TODO Sort grants by amount prior to insertion
     
     return grantAmounts.push(Number(amount));
   }
