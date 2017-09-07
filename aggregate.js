@@ -19,6 +19,7 @@ db.normalized.aggregate(
       'grant_min': { '$first': '$normalized.grant_min' },
       'grant_median': { '$first': '$normalized.grant_median' },
       'grant_count': { '$first': '$normalized.grant_count' },
+      'grant_count_all_years': { $sum: "$normalized.grant_count" },
       'filings': {
         '$push': {
           'object_id_irs': '$normalized.object_id_irs',

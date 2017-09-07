@@ -35,7 +35,7 @@ exports.checkForUpdates = function checkForUpdates(req, res) {
       res.send(
         'Total objects: ' + count + ' | ' +
         'Time to complete: ' + elapsed + '\n' +
-        'Last update count: 18705 \n'
+        'Last update count: 19186 \n'
       );
       count = 0;
     })
