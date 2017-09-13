@@ -14,8 +14,7 @@ Datasets: [Public IRS data set hosted by Amazon AWS](https://aws.amazon.com/publ
 ## The Scripts  
 
  1. `indexes.js` - Fetches index listings relating to IRS Form 990-PF filings for the specified tax year and inserts into MongoDB   
- 2. `filings.js` - Fetches all IRS Form 990-PF filings for the specified tax year and inserts into MongoDB  
- 3. `custom.js` - Combines data from IRS indexes and respective tax filings to create a custom index.   
+ 2. `filings.js` - Fetches all IRS Form 990-PF filings for the specified tax year and inserts into MongoDB     
 
 ## Scripts Used by [Grantmakers.io](https://www.grantmakers.io/)
 
@@ -37,7 +36,7 @@ MacBook Air with 8GB RAM (struggles)
 
 ## Troubleshooting
 
-See `troubleshoot.js` to log memory usage and toggle between using the npm request-promise package and the AWS JavaScript SDK.
+See `utilities/troubleshoot.js` to log memory usage and toggle between using the npm request-promise package and the AWS JavaScript SDK.
 
 ## Experiments  
 
