@@ -156,20 +156,30 @@ db.normalized.find().forEach(function(u) {
     let recipientName = null;
     let recipientCity = null;
     let recipientState = null;
+
     // Handle null scenario e.g https://s3.amazonaws.com/irs-form-990/201621379349103872_public.xml
     if (!each) {
       return false;
     }
+
+    // Capture name
     if (each.RecipientPersonNm) {
       recipientName = each.RecipientPersonNm;
+    } else if (each.RecipientPersonName) {
+      recipientName = each.RecipientPersonName;
     } else if (each.RecipientBusinessName) {
       recipientName  = each.RecipientBusinessName.BusinessNameLine1Txt || each.RecipientPersonNm || each.RecipientBusinessName.BusinessNameLine1 || null;
-    }
-    // TODO Add 2011 RecipientPersonName e.g. https://s3.amazonaws.com/irs-form-990/201203549349100200_public.xml
+    } 
+
+    // Capture City/State
     if (each.RecipientUSAddress) {
       recipientCity = each.RecipientUSAddress.CityNm || each.RecipientUSAddress.City || null;
       recipientState = each.RecipientUSAddress.StateAbbreviationCd ||  each.RecipientUSAddress.State || null;
+    } else if (each.RecipientForeignAddress) {
+      recipientCity = each.RecipientForeignAddress.CityNm || each.RecipientForeignAddress.City || 'N/A';
+      recipientState = each.RecipientForeignAddress.CountryCd || each.RecipientForeignAddress.Country || 'Foreign';
     }
+
     let amount = each.Amt || each.Amount || null;
     let purpose = each.GrantOrContributionPurposeTxt || each.PurposeOfGrantOrContribution || null;
     let grant = {
@@ -182,9 +192,9 @@ db.normalized.find().forEach(function(u) {
     // Limit grants to those over $5k if grantmakers has more than 10k total grants
     // Helps maintain 16MB MongoDB document size limit
     if (grantCount > 10000) {
-      if (amount && Number(amount) >= 5000) {
+      //if (amount && Number(amount) >= 5000) {
         grants.push(grant);
-      }
+      //}
     } else {
       grants.push(grant);
     }
@@ -258,9 +268,10 @@ db.normalized.find().forEach(function(u) {
 
   /** Update documents **/
   db.normalized.update(
-    u,
+    {'_id': u._id},
     {
       '$set': { 'normalized': normalized },
-    }
+    },
+    { upsert: true }
   );
 });
