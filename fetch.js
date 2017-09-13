@@ -14,6 +14,7 @@ const dateObj = new Date();
 const month = (dateObj.getUTCMonth() + 1 < 10 ? '0' : '') + (dateObj.getUTCMonth() + 1);
 const day = (dateObj.getUTCDate() < 10 ? '0' : '') + dateObj.getUTCDate();
 const year = dateObj.getFullYear().toString().substr(2, 2);
+const lastUpdated = new Date('2017-09-13 12:54:03.061Z');
 
 // AWS
 const AWS = require('aws-sdk');
@@ -61,7 +62,7 @@ request(index)
   })
   .pipe(es.mapSync(function(data) {
     // Filter results to only foundations w/ data available
-    if (data.URL && data.URL.length > 0 && data.FormType === '990PF') {
+    if (data.URL && data.URL.length > 0 && data.FormType === '990PF' && new Date(data.LastUpdated) > lastUpdated) {
       // Fetch XML using AWS SDK
       const targetKey = data.ObjectId + '_public.xml';
       const paramsXML = {'Bucket': 'irs-form-990', 'Key': targetKey};
