@@ -2,20 +2,21 @@
 // Underscore for MongoDB keys
 // IRS uses PascalCase
 db.normalized.find().forEach(function(u) {
-  let normalized = {};
   const ein = u.Index.EIN;
   const organizationName = u.Index.OrganizationName;
-  let assets = null;
-  let website = null;
-  let city = null;
-  let state = null;
   const taxPeriod = u.Index.TaxPeriod;
-  let taxYear = null;
   const url = u.Index.URL;
   const lastUpdated = u.Index.LastUpdated;
   const irsObjectId = u.Index.ObjectId;
   const now = new Date('2017-08-24T14:54:03.061Z');
   // TODO Pull directly from MongoDB updates collection
+  
+  let normalized = {};
+  let assets = null;
+  let website = null;
+  let city = null;
+  let state = null;
+  let taxYear = null;
 
   /** Capture IRS structural error **/
   // It appears certain organizations are listed in the index as filing Form 990PF, despite being 990 filers
