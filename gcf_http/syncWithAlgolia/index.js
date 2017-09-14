@@ -67,6 +67,6 @@ exports.syncWithAlgolia = function syncWithAlgolia(req, res) {
   });
 
   function sendToAlgolia(batch) {
-    index.addObjects(batch);
+    return index.addObjects(batch);
   }
 };
