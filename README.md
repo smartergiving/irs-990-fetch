@@ -20,7 +20,12 @@ Datasets: [Public IRS data set hosted by Amazon AWS](https://aws.amazon.com/publ
 
  1. `fetch.js` - Inserts individual index and filing info into MongoDB    
  2. `aggregate.js` - Combines info by EIN  
- 3. `normalize.js` - Pulls specific information across tax year   
+ 3. `normalize.js` - Pulls specific information across tax year  
+
+## Misc  
+
+1. `utilities/` - Various scripts and Mongo queries.     
+2. `experiments/` - In process experiments. These are often one-off items built on rainy Saturday mornings to scratch an itch, so tread carefully.  
 
 ## Usage
 
