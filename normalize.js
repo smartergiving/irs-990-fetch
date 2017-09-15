@@ -271,6 +271,7 @@ db.normalized.find().forEach(function(u) {
   db.normalized.update(
     {'_id': u._id},
     {
+      '$unset': {'Index': 1, 'Return': 1},
       '$set': { 'normalized': normalized },
     },
     { upsert: true }
