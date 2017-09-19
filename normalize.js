@@ -16,6 +16,8 @@ db.normalized.find().forEach(function(u) {
   let website = null;
   let city = null;
   let state = null;
+  let country = 'US';
+  let isForeign = false;
   let taxYear = null;
 
   /** Capture IRS structural error **/
@@ -34,14 +36,19 @@ db.normalized.find().forEach(function(u) {
 
   /** US or Foreign Address **/
   const us = u.Return.ReturnHeader.Filer.USAddress;
-  // const foreign = u.Return.ReturnHeader.Filer.ForeignAddress;
+  const foreign = u.Return.ReturnHeader.Filer.ForeignAddress;
 
   if (us) {
     city = us.CityNm || us.City;
     state = us.StateAbbreviationCd || us.State;
+  } else if (foreign) {
+    city = foreign.CityNm || foreign.City || 'Foreign';
+    state = foreign.ProvinceOrStateNm || foreign.ProvinceOrState || 'Foreign';
+    country = foreign.CountryCd || foreign.Country || 'Foreign';
+    isForeign = true;
   } else {
-    city = 'Foreign';
-    state = 'Foreign';
+    city = 'N/A';
+    state = 'N/A';
   }
   
   /** Website **/
@@ -157,6 +164,8 @@ db.normalized.find().forEach(function(u) {
     let recipientName = null;
     let recipientCity = null;
     let recipientState = null;
+    let recipientCountry = 'US';
+    let recipientIsForeign = false;
 
     // Handle null scenario e.g https://s3.amazonaws.com/irs-form-990/201621379349103872_public.xml
     if (!each) {
@@ -170,15 +179,17 @@ db.normalized.find().forEach(function(u) {
       recipientName = each.RecipientPersonName;
     } else if (each.RecipientBusinessName) {
       recipientName  = each.RecipientBusinessName.BusinessNameLine1Txt || each.RecipientPersonNm || each.RecipientBusinessName.BusinessNameLine1 || null;
-    } 
+    }
 
     // Capture City/State
     if (each.RecipientUSAddress) {
       recipientCity = each.RecipientUSAddress.CityNm || each.RecipientUSAddress.City || null;
       recipientState = each.RecipientUSAddress.StateAbbreviationCd ||  each.RecipientUSAddress.State || null;
     } else if (each.RecipientForeignAddress) {
+      recipientIsForeign = true;
       recipientCity = each.RecipientForeignAddress.CityNm || each.RecipientForeignAddress.City || 'N/A';
-      recipientState = each.RecipientForeignAddress.CountryCd || each.RecipientForeignAddress.Country || 'Foreign';
+      recipientState = each.RecipientForeignAddress.ProvinceOrStateNm || each.RecipientForeignAddress.ProvinceOrState || 'N/A';
+      recipientCountry = each.RecipientForeignAddress.CountryCd || each.RecipientForeignAddress.Country || 'Foreign';
     }
 
     let amount = each.Amt || each.Amount || null;
@@ -187,15 +198,17 @@ db.normalized.find().forEach(function(u) {
       'name': recipientName,
       'city': toTitleCase(recipientCity),
       'state': recipientState,
+      'country': recipientCountry,
+      'is_foreign': recipientIsForeign,
       'amount': Number(amount),
       'purpose': purpose,
     };
     // Limit grants to those over $5k if grantmakers has more than 10k total grants
     // Helps maintain 16MB MongoDB document size limit
     if (grantCount > 10000) {
-      //if (amount && Number(amount) >= 5000) {
-        grants.push(grant);
-      //}
+      // if (amount && Number(amount) >= 5000) {
+      grants.push(grant);
+      // }
     } else {
       grants.push(grant);
     }
@@ -214,8 +227,10 @@ db.normalized.find().forEach(function(u) {
     'organization_name': organizationName,
     'assets': Number(assets),
     'website': website,
+    'is_foreign': isForeign,
     'city': toTitleCase(city),
     'state': state,
+    'country': country,
     'tax_period': Number(taxPeriod),
     'tax_year': Number(taxYear),
     'url': url,
@@ -274,6 +289,6 @@ db.normalized.find().forEach(function(u) {
       '$unset': {'Index': 1, 'Return': 1},
       '$set': { 'normalized': normalized },
     },
-    { upsert: true }
+    { 'upsert': true }
   );
 });

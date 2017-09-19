@@ -12,6 +12,8 @@ db.normalized.aggregate(
       'website': { '$first': '$normalized.website' },
       'city': { '$first': '$normalized.city' },
       'state': { '$first': '$normalized.state'},
+      'country': {'$first': '$normalized.country'},
+      'is_foreign': {'$first': '$normalized.is_foreign'},
       'is_likely_staffed': { '$first': '$normalized.is_likely_staffed' },
       'has_website': { '$first': '$normalized.has_website' },
       'has_grants': { '$first': '$normalized.has_grants' },
@@ -20,7 +22,7 @@ db.normalized.aggregate(
       'grant_min': { '$first': '$normalized.grant_min' },
       'grant_median': { '$first': '$normalized.grant_median' },
       'grant_count': { '$first': '$normalized.grant_count' },
-      'grant_count_all_years': { $sum: "$normalized.grant_count" },
+      'grant_count_all_years': { '$sum': '$normalized.grant_count' },
       'filings': {
         '$push': {
           'object_id_irs': '$normalized.object_id_irs',
@@ -43,6 +45,8 @@ db.normalized.aggregate(
       'website': 1,
       'city': 1,
       'state': 1,
+      'country': 1,
+      'is_foreign': 1,
       'is_likely_staffed': 1,
       'has_website': 1,
       'has_grants': 1,
