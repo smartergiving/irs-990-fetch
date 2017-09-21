@@ -36,8 +36,8 @@ db.normalized.aggregate(
     }},
     { '$project': {
       '_id': 1,
-      'last_updated': 1,
-      'last_updated_irs': 1,
+      'last_updated': { '$dateToString': { 'format': '%Y-%m-%d %H:%M:%S:%H', 'date': '$last_updated'}},
+      'last_updated_irs': { '$dateToString': { 'format': '%Y-%m-%d %H:%M:%S:%H', 'date': '$last_updated'}},
       'ein': 1,
       'organization_name': 1,
       'organization_name_prior_year': { '$arrayElemAt': ['$names.organization_name', 1]},
