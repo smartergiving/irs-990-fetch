@@ -1,4 +1,4 @@
-// gcloud beta functions deploy functionName --stage-bucket bucketname --trigger-http
+// gcloud beta functions deploy syncWithAlgolia --stage-bucket bucketname --trigger-http
 const algoliasearch = require('algoliasearch');
 const secrets = require('./secrets');
 
@@ -9,64 +9,77 @@ const indexName = secrets.algolia.indexName;
 const client = algoliasearch(appID, apiKey);
 const index = client.initIndex(indexName);
 
-// MongoDB
-const Db = require('mongodb').Db;
-const Server = require('mongodb').Server;
-const db = new Db('irs', new Server(secrets.gce.host, '27017'));
+// Mongo
+const MongoClient = require('mongodb').MongoClient;
+const f = require('util').format;
+const user = encodeURIComponent(secrets.gce.user);
+const password = encodeURIComponent(secrets.gce.password);
+const host = encodeURIComponent(secrets.gce.host);
+const database = encodeURIComponent(secrets.gce.database);
+const authSource = encodeURIComponent(secrets.gce.authDatabase);
+const url = f('mongodb://%s:%s@%s:27017/%s?authSource=%s',
+  user, password, host, database, authSource);
+
+  // Issue - MongoError: Cursor not found, cursor id: 40761254904
+
 
 exports.syncWithAlgolia = function syncWithAlgolia(req, res) {
   // Open a db connection
-  db.open(function(oErr) {
-    if (oErr) throw new Error(oErr);
+  MongoClient.connect(url)
+    .then(db => {
+      const query = {};
+      const batchSize = 1000;
 
-    db.admin().authenticate(secrets.gce.user, secrets.gce.password, function(aErr, result) {
-      if (result) {
-        // Get the collection
-        db.collection('grants', function(gErr, collection) {
-          if (gErr) throw new Error(gErr);
-
-          // Get the collection count
-          collection.count()
-            .then(function(count) {
-              const collectionCount = count;
-              let processedCount = 0;
-              let batch = [];
-
-              // Iterate over the whole collection using a cursor
-              return collection.find().forEach(function loopThroughCollection(doc) {
-                // Remove unnecessary fields
-                delete doc._id;
-                
-                // Add doc to batch array
-                batch.push(doc);
-                ++processedCount;
-
-                // Send documents by batch of 5000 to Algolia
-                if (batch.length >= 5000) {
-                  return sendToAlgolia(batch).then(function sendBatchToAlgolia() {
-                    batch = [];
-                  });
-                }
-
-                // Send remaining documents
-                if (processedCount === collectionCount) {
-                  return sendToAlgolia(batch).then(function sendFinalBatchToAlgolia() {
+      let currentBatch = [];
+    
+      const collection = db.collection('grants');
+      const cursor = collection.find(query);
+      
+      // Kickstart the processing.
+      cursor.next(process);
+  
+      function process(err, doc) {
+        // Indicates whether there are more documents to process after the current one.
+        let hasMore = doc !== null ? true : false;
+    
+        if (doc === null) {
+          if (currentBatch.length > 0) {
+            processBatch(currentBatch)
+              .then(function() {
+                return db.close(function(e, r) {
+                  if (r) {
                     res.send('Algolia sync complete \n');
-                    db.close();
-                  });
-                }
-                return false;
+                  }
+                  return;
+                });
               });
-            })
-            .catch(function(cErr) {
-              throw new Error(cErr);
-            });
-        });
+          }
+          console.log('Finished processing documents');
+          return;
+        } else {
+          setTimeout(function() {
+            currentBatch.push(doc);
+            if (currentBatch.length % batchSize === 0) {
+              processBatch(currentBatch)
+                .then(function() {
+                  currentBatch = [];
+                  return cursor.next(process);
+                });
+            } else if (hasMore) {
+              cursor.next(process);
+            } else {
+              return;
+            }
+          });
+        }
       }
+    })
+    .catch(function(cErr) {
+      throw new Error(cErr);
     });
-  });
 
-  function sendToAlgolia(batch) {
+  function processBatch(batch) {
+    console.log('Batch sent to Algolia');
     return index.addObjects(batch);
   }
 };
