@@ -12,6 +12,7 @@ const index = client.initIndex(indexName);
 // Mongo
 const MongoClient = require('mongodb').MongoClient;
 const f = require('util').format;
+/*
 const user = encodeURIComponent(secrets.gce.user);
 const password = encodeURIComponent(secrets.gce.password);
 const host = encodeURIComponent(secrets.gce.host);
@@ -19,6 +20,9 @@ const database = encodeURIComponent(secrets.gce.database);
 const authSource = encodeURIComponent(secrets.gce.authDatabase);
 const url = f('mongodb://%s:%s@%s:27017/%s?authSource=%s',
   user, password, host, database, authSource);
+  */
+// Sync local db 
+const url = f('mongodb://localhost:27017/irs');
 
 exports.syncWithAlgolia = function syncWithAlgolia(req, res) {
   // Open a db connection
@@ -53,13 +57,11 @@ exports.syncWithAlgolia = function syncWithAlgolia(req, res) {
           console.log('Finished processing documents');
           return;
         } else {
-          console.time('algolia');
           setTimeout(function() {
             currentBatch.push(doc);
             if (currentBatch.length % batchSize === 0) {
               processBatch(currentBatch)
                 .then(function() {
-                  console.timeEnd('algolia');
                   currentBatch = [];
                   return cursor.next(process);
                 });

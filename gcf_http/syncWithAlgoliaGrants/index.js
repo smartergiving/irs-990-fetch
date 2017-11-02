@@ -1,4 +1,4 @@
-// gcloud beta functions deploy syncWithAlgolia --stage-bucket bucketname --trigger-http
+// node -e 'require("./index").syncWithAlgolia()'
 const algoliasearch = require('algoliasearch');
 const secrets = require('./secrets');
 
@@ -12,6 +12,7 @@ const index = client.initIndex(indexName);
 // Mongo
 const MongoClient = require('mongodb').MongoClient;
 const f = require('util').format;
+/*
 const user = encodeURIComponent(secrets.gce.user);
 const password = encodeURIComponent(secrets.gce.password);
 const host = encodeURIComponent(secrets.gce.host);
@@ -19,9 +20,9 @@ const database = encodeURIComponent(secrets.gce.database);
 const authSource = encodeURIComponent(secrets.gce.authDatabase);
 const url = f('mongodb://%s:%s@%s:27017/%s?authSource=%s',
   user, password, host, database, authSource);
-
-  // Issue - MongoError: Cursor not found, cursor id: 40761254904
-
+  */
+// Sync local db 
+const url = f('mongodb://localhost:27017/irs');
 
 exports.syncWithAlgolia = function syncWithAlgolia(req, res) {
   // Open a db connection
@@ -29,11 +30,10 @@ exports.syncWithAlgolia = function syncWithAlgolia(req, res) {
     .then(db => {
       const query = {};
       const batchSize = 1000;
-
-      let currentBatch = [];
     
-      const collection = db.collection('grants');
+      const collection = db.collection('grants_updates');
       const cursor = collection.find(query);
+      let currentBatch = [];
       
       // Kickstart the processing.
       cursor.next(process);
