@@ -9,8 +9,8 @@
   "author": "Chad Kruse, SmarterGiving",
   "license": "MIT",
   "dependencies": {
-    "algoliasearch": "^3.24.5",
-    "mongodb": "^2.2.33"
+    "algoliasearch": "^3.24.0",
+    "mongodb": "^2.2.29"
   },
   "devDependencies": {},
   "repository": {

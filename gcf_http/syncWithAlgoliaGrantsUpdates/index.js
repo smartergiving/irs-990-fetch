@@ -1,4 +1,4 @@
-// node -e 'require("./index").syncWithAlgolia()'
+// node -e 'require("./index").syncWithAlgoliaGrantsUpdates()'
 const algoliasearch = require('algoliasearch');
 const secrets = require('./secrets');
 
@@ -12,8 +12,6 @@ const index = client.initIndex(indexName);
 // Mongo
 const MongoClient = require('mongodb').MongoClient;
 const f = require('util').format;
-
-// Sync hosted db
 /*
 const user = encodeURIComponent(secrets.gce.user);
 const password = encodeURIComponent(secrets.gce.password);
@@ -22,27 +20,26 @@ const database = encodeURIComponent(secrets.gce.database);
 const authSource = encodeURIComponent(secrets.gce.authDatabase);
 const url = f('mongodb://%s:%s@%s:27017/%s?authSource=%s',
   user, password, host, database, authSource);
-*/
-
-// Sync local db
+  */
+// Sync local db 
 const url = f('mongodb://localhost:27017/grantmakers');
 
-exports.syncWithAlgolia = function syncWithAlgolia(req, res) {
+exports.syncWithAlgoliaGrantsUpdates = function syncWithAlgoliaGrantsUpdates(req, res) {
   // Open a db connection
   MongoClient.connect(url)
     .then(db => {
       const query = {};
       const batchSize = 1000;
     
-      const collection = db.collection('algolia');
-      const cursor = collection.find(query).batchSize(batchSize);
+      const collection = db.collection('grants_updates');
+      const cursor = collection.find(query);
       let currentBatch = [];
       
-      // Start processing
-      return cursor.next(process);
+      // Kickstart the processing.
+      cursor.next(process);
   
       function process(err, doc) {
-        // Check if more docs exist
+        // Indicates whether there are more documents to process after the current one.
         let hasMore = doc !== null ? true : false;
     
         if (doc === null) {
