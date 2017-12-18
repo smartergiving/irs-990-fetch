@@ -3,7 +3,7 @@ db.normalized.aggregate(
     { '$sort': { 'normalized.ein': 1, 'normalized.tax_period': -1, 'normalized.last_updated_irs': -1 } },
     { '$group': {
       '_id': '$normalized.ein',
-      'last_updated': { '$first': '$normalized.last_updated'},
+      'last_updated_grantmakers': { '$first': '$normalized.last_updated_grantmakers'},
       'last_updated_irs': { '$first': '$normalized.last_updated_irs'},
       'ein': { '$first': '$normalized.ein' },
       'organization_name': { '$first': '$normalized.organization_name' },
@@ -23,6 +23,7 @@ db.normalized.aggregate(
       'grant_median': { '$first': '$normalized.grant_median' },
       'grant_count': { '$first': '$normalized.grant_count' },
       'grant_count_all_years': { '$sum': '$normalized.grant_count' },
+      'grants_to_preselected_only': { '$first': '$normalized.grants_to_preselected_only' },
       'filings': {
         '$push': {
           'object_id_irs': '$normalized.object_id_irs',
@@ -36,8 +37,8 @@ db.normalized.aggregate(
     }},
     { '$project': {
       '_id': 1,
-      'last_updated': { '$dateToString': { 'format': '%Y-%m-%dT%H:%M:%S.%L', 'date': '$last_updated'}},
-      'last_updated_irs': { '$dateToString': { 'format': '%Y-%m-%dT%H:%M:%S.%L', 'date': '$last_updated_irs'}},
+      'last_updated_grantmakers': 1,
+      'last_updated_irs': 1,
       'ein': 1,
       'organization_name': 1,
       'organization_name_prior_year': { '$arrayElemAt': ['$names.organization_name', 1]},
@@ -55,6 +56,7 @@ db.normalized.aggregate(
       'grant_min': 1,
       'grant_median': 1,
       'grant_count': 1,
+      'grants_to_preselected_only': 1,
       'filings': 1,
       'grants': 1,
       'people': 1,

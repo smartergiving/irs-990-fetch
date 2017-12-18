@@ -9,12 +9,12 @@ const xml2jsParser = require('xml2js').parseString;
 const targetYear = '2017'; // Enter the year to fetch
 const index = 'https://s3.amazonaws.com/irs-form-990/index_' + targetYear + '.json';
 
-// Date of Update
+// Dates & Timestamps
 const dateObj = new Date();
 const month = (dateObj.getUTCMonth() + 1 < 10 ? '0' : '') + (dateObj.getUTCMonth() + 1);
 const day = (dateObj.getUTCDate() < 10 ? '0' : '') + dateObj.getUTCDate();
 const year = dateObj.getFullYear().toString().substr(2, 2);
-const lastUpdated = new Date('2017-10-02T22:28:47.000Z');
+const previousUpdate = new Date('2017-11-01T15:00:00.000');
 
 // AWS
 const AWS = require('aws-sdk');
@@ -62,7 +62,7 @@ request(index)
   })
   .pipe(es.mapSync(function(data) {
     // Filter results to only foundations w/ data available
-    if (data.URL && data.URL.length > 0 && data.FormType === '990PF' && new Date(data.LastUpdated) > lastUpdated) {
+    if (data.URL && data.URL.length > 0 && data.FormType === '990PF' && new Date(data.LastUpdated) > previousUpdate) {
       // Fetch XML using AWS SDK
       const targetKey = data.ObjectId + '_public.xml';
       const paramsXML = {'Bucket': 'irs-form-990', 'Key': targetKey};
@@ -85,6 +85,7 @@ request(index)
 
           obj = {
             '_id': data.ObjectId,
+            'last_updated_grantmakers': dateObj.toISOString(),
             'Index': data,
             'Return': resultJS.Return,
           };
@@ -105,9 +106,6 @@ request(index)
           console.error(err);
         });
     }
-  })
-  .on('end', function() {
-    console.log('-----JSON Request is Finished-----');
     return false;
   })
   .on('error', function(err) {
